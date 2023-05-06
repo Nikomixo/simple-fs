@@ -20,4 +20,4 @@ test: simfs_test
 	./simfs_test
 
 clean:
-	rm -f *.o *.a simfs_test
+	rm -f *.o *.a *_test
