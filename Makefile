@@ -3,7 +3,7 @@ CCOPTS = -Wall -Wextra
 simfs_test: simfs_test.o simfs.a
 	gcc -o $@ $^
 
-simfs.a: image.o block.o free.o inode.o
+simfs.a: image.o block.o free.o inode.o mkfs.o
 	ar rcs $@ $^
 
 #compile simfs_test with flag
