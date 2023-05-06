@@ -4,7 +4,7 @@
 
 int ialloc(void)
 {
-    unsigned char inode_block[BLOCK_SIZE];
+    unsigned char inode_block[BLOCK_SIZE] = {0};
 
     bread(INODE_MAP_NUM, inode_block);
 

@@ -17,7 +17,8 @@ simfs_test.o: simfs_test.c
 .PHONY: test clean
 
 test: simfs_test
+	rm -f *_testfile
 	./simfs_test
 
 clean:
-	rm -f *.o *.a *_test
+	rm -f *.o *.a *_testfile simfs_test
