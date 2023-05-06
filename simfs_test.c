@@ -60,6 +60,17 @@ void test_inode(void)
     image_close();
 }
 
+void test_mkfs(void)
+{
+    image_open("mkfs_testfile", 0);
+
+    mkfs();
+
+    CTEST_ASSERT(alloc() == 7, "testing mkfs allocates 6 blocks");
+
+    image_close();
+}
+
 int main(void)
 {
     CTEST_VERBOSE(1);
@@ -67,6 +78,7 @@ int main(void)
     test_block();
     test_free();
     test_inode();
+    test_mkfs();
 
     CTEST_RESULTS();
 
