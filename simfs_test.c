@@ -54,8 +54,46 @@ void test_inode(void)
 {
     image_open("free_testfile", 0);
 
-    CTEST_ASSERT(ialloc() == 0, "testing with clean inode map");
-    CTEST_ASSERT(ialloc() == 1, "testing with used inode map");
+    struct inode *node4 = ialloc();
+    if (node4 == NULL)
+    {
+        printf("null\n");
+    }
+    CTEST_ASSERT(node4->inode_num == 0, "testing with clean inode map");
+
+    struct inode *node5 = ialloc();
+    CTEST_ASSERT(node5->inode_num == 1, "testing with used inode map");
+
+    struct inode *node1 = find_incore_free();
+
+    node1->inode_num = 2;
+    node1->ref_count = 1;
+    node1->owner_id = 1;
+
+    CTEST_ASSERT(find_incore(2)->owner_id == 1, "testing find_incore_free and find_incore");
+
+    node1->size = 5;
+    node1->link_count = 2;
+    node1->permissions = 1;
+
+    write_inode(node1);
+
+    struct inode node2;
+    read_inode(&node2, 2);
+    CTEST_ASSERT(node2.permissions == 1, "testing inode_read and inode_write");
+
+    CTEST_ASSERT(iget(2)->ref_count == 2, "testing iget for node stored in core");
+
+    struct inode *node3 = iget(3);
+    CTEST_ASSERT(find_incore(3)->ref_count > 0, "testing iget for node not in core");
+
+    iput(node3);
+    CTEST_ASSERT(find_incore(3) == NULL, "testing iput for ref_count == 1");
+
+    iget(3);
+    iget(3);
+    iput(node3);
+    CTEST_ASSERT(find_incore(3)->ref_count == 1, "testing iput for ref_count == 2");
 
     image_close();
 }
