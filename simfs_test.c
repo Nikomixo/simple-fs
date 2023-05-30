@@ -8,6 +8,8 @@
 #include "free.h"
 #include "inode.h"
 #include "mkfs.h"
+#include "directory.h"
+#include "ls.h"
 
 void test_block(void)
 {
@@ -105,6 +107,27 @@ void test_mkfs(void)
     mkfs();
 
     CTEST_ASSERT(alloc() == 7, "testing mkfs allocates 6 blocks");
+
+    struct directory *dir;
+    // open root directory
+    dir = directory_open(0);
+
+    struct directory_entry dir_ent;
+    directory_get(dir, &dir_ent);
+
+    CTEST_ASSERT(strcmp(dir_ent.name, ".") == 0, "testing mkfs root directory '.' filename, along with directory_open and directory_get");
+    CTEST_ASSERT(dir_ent.inode_num == 0, "testing mkfs root directory '.' file points to root inode");
+
+    directory_get(dir, &dir_ent);
+
+    CTEST_ASSERT(strcmp(dir_ent.name, "..") == 0, "testing directory_get grabs next directory entry");
+
+    CTEST_ASSERT(directory_get(dir, &dir_ent) == -1, "testing directory_get returns -1 when out of entries");
+
+    directory_close(dir);
+
+    printf("\ncalling ls()\n");
+    ls();
 
     image_close();
 }
