@@ -106,7 +106,7 @@ void test_mkfs(void)
 
     mkfs();
 
-    CTEST_ASSERT(alloc() == 7, "testing mkfs allocates 6 blocks");
+    CTEST_ASSERT(alloc() == 8, "testing mkfs allocates 7 blocks plus root");
 
     struct directory *dir;
     // open root directory
@@ -120,7 +120,14 @@ void test_mkfs(void)
 
     directory_get(dir, &dir_ent);
 
+    CTEST_ASSERT(directory_make("/foo/bar") == -1, "creating a directory with a non-root path should return -1");
+
     CTEST_ASSERT(strcmp(dir_ent.name, "..") == 0, "testing directory_get grabs next directory entry");
+
+    CTEST_ASSERT(directory_make("/foo") == 0, "creating a directory");
+
+    directory_get(dir, &dir_ent);
+    CTEST_ASSERT(strcmp(dir_ent.name, "foo") == 0, "directory /foo exists");
 
     CTEST_ASSERT(directory_get(dir, &dir_ent) == -1, "testing directory_get returns -1 when out of entries");
 

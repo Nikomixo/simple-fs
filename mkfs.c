@@ -10,6 +10,18 @@
 
 void mkfs(void)
 {
+
+    for (int i = 0; i < NUM_BLOCKS; i++)
+    {
+        unsigned char block[BLOCK_SIZE] = {0};
+        write(image_fd, block, BLOCK_SIZE);
+    }
+
+    for (int i = 0; i < 7; i++)
+    {
+        alloc();
+    }
+
     // create root directory
     struct inode *root = ialloc();
     int data = alloc();
@@ -28,17 +40,6 @@ void mkfs(void)
     write_u16(block + ENTRY_SIZE, root->inode_num);
     strcpy((char *)block + ENTRY_SIZE + 2, "..");
 
-    bwrite(root->inode_num, block);
+    bwrite(data, block);
     iput(root);
-
-    for (int i = 0; i < NUM_BLOCKS; i++)
-    {
-        unsigned char block[BLOCK_SIZE] = {0};
-        write(image_fd, block, BLOCK_SIZE);
-    }
-
-    for (int i = 0; i < 7; i++)
-    {
-        alloc();
-    }
 }

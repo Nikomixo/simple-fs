@@ -29,7 +29,11 @@ int alloc(void)
     {
         set_free(data_block, free_data, 1);
         bwrite(BLOCK_MAP_NUM, data_block);
-    }
 
-    return free_data;
+        return free_data;
+    }
+    else
+    {
+        return -1;
+    }
 }
